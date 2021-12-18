@@ -3,14 +3,14 @@ import { BaseModel, BelongsTo, belongsTo, column, computed } from '@ioc:Adonis/L
 import { Destination, DESTINATIONS } from 'App/Models/Mission';
 import User from 'App/Models/User';
 
-function randomAmount(): number {
-	let random = Math.ceil(Math.random() * 1000) - 10;
+function randomAmount(multiplier: number): number {
+	let random = ((Math.random() * 1000) - 10) * multiplier;
 
-	if (random < 0) {
-		return 0;
+	if (random < 4) {
+		random = 0;
 	}
 
-	return random;
+	return Math.ceil(random);
 }
 
 export default class Wishlist extends BaseModel {
@@ -19,15 +19,16 @@ export default class Wishlist extends BaseModel {
 		wishlist.userId = userId;
 		wishlist.destinationId = destinationId;
 		wishlist.items = {
-			games: Math.round(randomAmount() * multiplier),
-			books: Math.round(randomAmount() * multiplier),
-			construction: Math.round(randomAmount() * multiplier),
-			decor: Math.round(randomAmount() * multiplier),
-			electronics: Math.round(randomAmount() * multiplier),
-			music: Math.round(randomAmount() * multiplier),
-			plushies: Math.round(randomAmount() * multiplier),
-			toys: Math.round(randomAmount() * multiplier),
+			games: randomAmount(multiplier),
+			books: randomAmount(multiplier),
+			construction: randomAmount(multiplier),
+			decor: randomAmount(multiplier),
+			electronics: randomAmount(multiplier),
+			music: randomAmount(multiplier),
+			plushies: randomAmount(multiplier),
+			toys: randomAmount(multiplier),
 		};
+
 		await wishlist.save();
 		return wishlist;
 	}
