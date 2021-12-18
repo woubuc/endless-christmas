@@ -42,6 +42,11 @@ export default class User extends BaseModel {
 	@hasMany(() => Mission)
 	public missions: HasMany<typeof Mission>;
 
+	@computed()
+	public get activeMissions(): Mission[] {
+		return this.missions.filter(m => m.started != null);
+	}
+
 	@hasMany(() => Wishlist)
 	public wishlists: HasMany<typeof Wishlist>;
 

@@ -5,20 +5,26 @@
 @section('body')
 	<h2 class="text-lg font-semibold text-gray-400">
 		@if(mission.type === 'pickup')
-		Picking up wishlists from
+			Picking up wishlists from
 		@else
-		Delivering presents to
+			Delivering presents to
 		@end
 		{{ mission.destination.name }}
 	</h2>
 
 	@if(mission.started == null)
-	<p class="mb-4">Preparing for mission</p>
+		<p class="mb-4">Preparing for mission</p>
 	@else
-		<p>Mission will return {{ mission.endTime.plus({ seconds: 1 }).toRelative() }}</p>
+		<p class="mb-4">Mission will return {{ mission.endTime.plus({ seconds: 1 }).toRelative() }}</p>
 	@end
 
-	<div class="my-4 p-4 space-y-4 bg-gray-800 rounded">
+	@if(mission.reward > 0)
+		<p class="mb-1 text-gray-400">
+			Payment upon completion: <span class="text-white font-mono">{{ mission.reward }}</span> coins
+		</p>
+	@end
+
+	<div class="mb-4 p-4 space-y-4 bg-gray-800 rounded">
 		@if(mission.workers.length > 0)
 			@each(worker in mission.workers)
 				@if(mission.started == null)
@@ -48,7 +54,7 @@
 		@end
 
 		@if(mission.started == null)
-			<form action="/game/missions/{{ mission.id }}/workers" method="post" class="flex items-center space-x-4 pt-4 border-t-2 border-gray-700">
+			<form action="/game/missions/{{ mission.id }}/workers" method="post" class="sm:flex flex-wrap items-center gap-x-4 pt-4 border-t-2 border-gray-700">
 				@if(workers.length > 0)
 					<label class="flex items-center space-x-2">
 						<span>Assign elf</span>

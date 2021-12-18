@@ -7,7 +7,7 @@
 		<a href="/game/workers/hire" class="inline-block no-underline px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 hover:text-white focus:text-white rounded text-white font-medium cursor-pointer">Hire more elves</a>
 	</p>
 
-	<div class="md:grid grid-cols-2 lg:grid-cols-3 gap-4">
+	<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
 		@each(worker in workers)
 			<div class="bg-gray-800 rounded p-6">
 				@!component('components/worker', { worker })

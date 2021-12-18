@@ -10,9 +10,9 @@
 			<div class="flex">
 				<h3 class="flex-grow font-semibold">
 					@if(mission.type === 'pickup')
-					Picking up wishlists
+						Picking up wishlists
 					@else
-					Delivering presents
+						Delivering presents
 					@end
 				</h3>
 				@if(mission.reward > 0)
@@ -45,7 +45,7 @@
 			<form class="flex items-center pt-2 pb-3" action="/game/missions" method="post">
 				<div class="flex-grow">
 					<h3 class="text-lg font-semibold text-gray-400">{{ destination.name }}</h3>
-					<div class="flex flex-wrap space-x-8 text-sm">
+					<div class="flex flex-wrap gap-x-8 gap-y-0.5 text-sm">
 						<p>Approx. <span class="font-bold">{{ destination.distance }}</span> minutes away</p>
 						<p>Christmas spirit
 							<span class="inline-block w-6 h-2 ml-1 rounded-sm overflow-hidden bg-gray-800">

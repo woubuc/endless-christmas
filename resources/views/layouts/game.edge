@@ -30,12 +30,12 @@
 	Alpine.store('user', JSON.parse('{{{ stringify(auth.user.serialize()) }}}'));
 	</script>
 </head>
-<body class="bg-gray-900 text-white border-t-2 border-orange-700">
-	<div class="sm:flex items-stretch gap-4 lg:gap-8 max-w-screen-lg h-screen mx-auto md:p-8 lg:p-12" style="margin-top:-2px">
+<body class="bg-gray-900 text-white">
+	<div class="sm:flex items-stretch gap-4 lg:gap-8 max-w-screen-lg h-screen mx-auto md:p-8 lg:p-12">
 		<div
-			class="flex-none flex sm:flex-col space-x-6 sm:space-x-0 sm:space-y-10 sm:w-56 md:w-64 px-6 py-4 bg-gradient-to-b from-gray-800 to-gray-900 md:rounded">
-			<div>
-				<p class="flex items-center space-x-2 mb-3.5 text-white">
+			class="flex-none space-y-4 sm:space-y-8 md:space-y-10 sm:w-56 md:w-64 px-4 md:px-6 py-4 bg-gradient-to-b from-gray-800 to-gray-900 md:rounded">
+			<div class="flex justify-between sm:block">
+				<p class="flex items-center space-x-2 sm:mb-3.5 text-white">
 					<span class="inline-block w-8 text-gray-400">
 						@include('icons/santa')
 					</span>
@@ -48,10 +48,10 @@
 			</div>
 
 			<div>
-				<h2 class="mb-2 text-sm font-bold text-gray-500">Inventory</h2>
+				<h2 class="md:mb-2 text-sm font-bold text-gray-500">Inventory</h2>
 				@each((amount, item) in auth.user.inventory)
 					@if(amount > 0)
-					<p class="my-1 flex items-center space-x-2.5 text-gray-400">
+					<p class="max-w-xs my-1 flex items-center space-x-2.5 text-gray-400">
 						@include(`icons/items/${ item }`)
 						<span class="flex-grow">
 							<span class="text-white rounded font-mono font-semibold">{{ amount }}</span>
@@ -64,46 +64,67 @@
 			</div>
 
 			<div>
-				<h2 class="mb-2 text-sm font-bold text-gray-500">Wishlists</h2>
+				<h2 class="md:mb-2 text-sm font-bold text-gray-500">Wishlists</h2>
 				@each(wishlist in auth.user.wishlists)
 				<div class="flex space-x-2 items-center">
 					<p class="flex-grow">
 						<a href="/game/wishlists/{{ wishlist.id }}">{{ wishlist.destination.name }}</a>
 					</p>
 					<p class="text-xs font-mono text-gray-400">{{ Math.floor(wishlist.completeness * 100) }}%</p>
-					<div class="w-8 h-2 bg-gray-900 rounded-sm overflow-hidden">
-						<div class="h-2 bg-gradient-to-b {{ wishlist.completeness >= 1 ? 'from-lime-500 to-green-700' : 'from-violet-500 to-violet-700' }}" style="width:{{ Math.floor(wishlist.completeness * 100) }}%"></div>
+					<div class="w-8 h-2.5 bg-gray-900 rounded-sm overflow-hidden">
+						<div class="h-2.5 bg-gradient-to-b {{ wishlist.completeness >= 1 ? 'from-lime-500 to-green-700' : 'from-violet-500 to-violet-700' }}" style="width:{{ Math.floor(wishlist.completeness * 100) }}%"></div>
 					</div>
 				</div>
 				@end
 			</div>
+
+			@if(auth.user.activeMissions.length > 0)
+				<div class="hidden sm:block">
+					<h2 class="md:mb-2 text-sm font-bold text-gray-500">Active missions</h2>
+					@each(mission in auth.user.activeMissions)
+						<div class="flex space-x-2 items-center">
+							<p class="flex-grow">
+								<a href="/game/missions/{{ mission.id }}">
+									@if(mission.type === 'pickup')
+										Pickup from
+									@else
+										Deliver to
+									@end
+									{{ mission.destination.name }}
+								</a>
+							</p>
+							<p class="text-xs font-mono text-gray-400">{{ mission.endTime.toRelative({ style: 'short', padding: 1000 }) }}</p>
+						</div>
+					@end
+				</div>
+			@end
 		</div>
 
 		<div class="flex-grow px-4 sm:pl-0 md:pr-0">
-			<nav class="flex flex-wrap space-x-2 mb-4 p-2 border-2 border-gray-700 rounded-lg">
+			<nav class="flex flex-col sm:flex-row flex-wrap gap-x-2 gap-y-0.5 mb-4 p-2 border-2 border-gray-700 rounded-lg">
 				<a href="/game"
-				   class="px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game') ? 'bg-gray-800 text-gray-300' : '' }}">Santa HQ</a>
+				   class="px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game') ? 'bg-gray-800 text-gray-300' : '' }}">Santa HQ</a>
 
 				<a href="/game/workers"
-				   class="relative px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/workers') ? 'bg-gray-800 text-gray-300' : '' }}">
+				   class="relative flex items-center px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/workers') ? 'bg-gray-800 text-gray-300' : '' }}">
 					Elves
 					@if(auth.user.freeWorkerCount > 0)
-						<span class="absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
+						<span class="sm:absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 ml-2 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
 							<span>{{ auth.user.freeWorkerCount }}</span>
 						</span>
 					@end
 				</a>
 
 				<a href="/game/market"
-				   class="relative px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/market') ? 'bg-gray-800 text-gray-300' : '' }}">
+				   class="px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/market') ? 'bg-gray-800 text-gray-300' : '' }}">
 					Market
 				</a>
 
 				<a href="/game/missions"
-				   class="relative px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/missions') ? 'bg-gray-800 text-gray-300' : '' }}">
+				   class="relative flex items-center px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/missions') ? 'bg-gray-800 text-gray-300' : '' }}">
 					World
 					@if(auth.user.pendingMissionCount > 0)
-					<span class="absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
+					<span class="sm:absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 ml-2 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
 							<span>{{ auth.user.pendingMissionCount }}</span>
 						</span>
 					@end
@@ -112,12 +133,17 @@
 				<span class="flex-grow"></span>
 				<form class="text-right" action="/logout" method="post">
 					<input type="submit" value="Log out"
-						   class="px-3 py-1 rounded no-underline text-emerald-500 hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 text-sm font-semibold cursor-pointer">
+						   class="px-2 md:px-3 py-1 rounded no-underline text-emerald-500 hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 text-sm font-semibold cursor-pointer">
 					{{ csrfField() }}
 				</form>
 			</nav>
 
 			@!section('body')
+
+			<footer class="space-y-1 mt-6 py-4 border-t-2 border-gray-800 text-xs text-gray-500 text-center">
+				<p>&copy; woubuc</p>
+				<p>icons by <a href="https://icons8.com/" target="_blank">icons8</a></p>
+			</footer>
 		</div>
 	</div>
 </body>
