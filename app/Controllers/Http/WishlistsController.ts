@@ -42,7 +42,7 @@ export default class WishlistsController {
 		mission.type = 'deliver';
 		mission.userId = user.id;
 		mission.destinationId = wishlist.destinationId;
-		mission.reward = Math.ceil(wishlist.totalCount * 2);
+		mission.reward = Math.ceil(wishlist.totalCount * 3);
 
 		return Database.transaction(async tx => {
 			await user.useTransaction(tx).save();
