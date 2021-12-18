@@ -22,39 +22,45 @@ export interface Destination {
 export const DESTINATIONS: Record<string, Destination> = {
 	'reykjavik': {
 		name: 'Reykjavik',
-		distance: 4,
+		distance: 1,
 		population: 0.01,
 		minSkill: 1,
 	},
 	'oslo': {
 		name: 'Oslo',
-		distance: 12,
-		population: 0.04,
+		distance: 8,
+		population: 0.1,
 		minSkill: 2,
 	},
 	'paris': {
 		name: 'Paris',
-		distance: 20,
-		population: 0.1,
-		minSkill: 3,
+		distance: 15,
+		population: 0.2,
+		minSkill: 4,
 	},
 	'vienna': {
 		name: 'Vienna',
-		distance: 35,
-		population: 0.3,
-		minSkill: 4,
+		distance: 28,
+		population: 0.5,
+		minSkill: 5,
 	},
 	'new york': {
 		name: 'New York City',
+		distance: 40,
+		population: 0.75,
+		minSkill: 4,
+	},
+	'rio': {
+		name: 'Rio de Janeiro',
 		distance: 56,
-		population: 0.6,
+		population: 0.86,
 		minSkill: 6,
 	},
 	'whoville': {
 		name: 'Whoville',
 		distance: 70,
 		population: 1,
-		minSkill: 8,
+		minSkill: 9,
 	},
 };
 
