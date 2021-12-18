@@ -18,7 +18,7 @@ export default class AuthRegisterValidator {
 	public messages = {
 		required: 'Field cannot be empty',
 		'email.unique': 'This email address is already in use',
-		'password.minLength': 'Please choose a password of at least {{ options }} characters',
+		'password.minLength': 'Please choose a password of at least {{ options.minLength }} characters',
 		'password.confirmed': 'Passwords do not match',
 	};
 }
