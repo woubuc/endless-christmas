@@ -3,11 +3,15 @@ import GameChooseNameValidator from 'App/Validators/GameChooseNameValidator';
 
 export default class GameController {
 
-	public async overview({ auth, view }: HttpContextContract) {
+	public async overview({ auth, view, response }: HttpContextContract) {
 		let user = auth.user!;
 
 		if (user.name == null) {
 			return view.render('game/choose-name');
+		}
+
+		if (user.needsTutorial('hire_elves')) {
+			return response.redirect('/game/workers');
 		}
 
 		return view.render('game/overview');

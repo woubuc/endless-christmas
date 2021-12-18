@@ -3,8 +3,24 @@
 @set('title', 'Elves')
 
 @section('body')
-	<p class="mb-4 pb-4 text-right border-b-2 border-gray-800">
-		<a href="/game/workers/hire" class="inline-block no-underline px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 hover:text-white focus:text-white rounded text-white font-medium cursor-pointer">Hire more elves</a>
+
+	@if(auth.user.needsTutorial('hire_elves'))
+		<div class="my-4 px-6 py-4 space-y-2.5 bg-cyan-900 bg-opacity-50 border-2 border-cyan-700 rounded-lg text-white">
+			<div class="flex gap-2.5">
+				<span class="flex-none -ml-1 w-8 text-cyan-300">
+					@include('icons/tutorial')
+				</span>
+				<h2 class="text-cyan-100 text-lg font-semibold">Vacancy <span class="pl-1 text-sm font-normal text-cyan-200">1/3</span></h2>
+			</div>
+			<p>Woah, what's this? A tutorial is what it is! These blue info boxes will guide you through the first steps of setting up your very own Santa Corp workshop.</p>
+			<p>Santa Corp management recommends reading and following the instructions carefully, because &mdash; and I quote &mdash; <em class="italic">"I'm not gonna explain it twice</em>".</p>
+			<p class="text-sm text-cyan-200 text-opacity-50 italic">Also the tutorial may break entirely if you don't follow it because I haven't had a lot of time to implement it properly.</p>
+			<p>So, first things first. You're going to need some elves to work for you. Click the <strong class="font-semibold">"hire elves"</strong> button to go to the hiring screen.</p>
+		</div>
+	@end
+
+	<p class="mb-4 pb-4 text-right {{ auth.user.hiredWorkerCount > 0 ? 'border-b-2 border-gray-800' : '' }}">
+		<a href="/game/workers/hire" class="inline-block no-underline px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 hover:text-white focus:text-white rounded text-white font-medium cursor-pointer">Hire {{ auth.user.hiredWorkerCount > 0 ? 'more ' : '' }}elves</a>
 	</p>
 
 	<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -3,66 +3,95 @@
 @set('title', 'World')
 
 @section('body')
-<h2 class="mb-2 text-sm font-bold text-gray-500">My missions</h2>
-<div class="grid grid-cols-2 auto-rows-fr mb-6 gap-2">
-	@each(mission in auth.user.missions)
-		<div class="p-4 bg-gray-800 rounded">
-			<div class="flex">
-				<h3 class="flex-grow font-semibold">
-					@if(mission.type === 'pickup')
-						Picking up wishlists
-					@else
-						Delivering presents
-					@end
-				</h3>
-				@if(mission.reward > 0)
-					<p class="text-sm text-gray-400">
-						Payment: <span class="text-white font-mono">{{ mission.reward }}</span> coins
-					</p>
-				@end
+	@if(auth.user.needsTutorial('mission'))
+		<div class="my-4 px-6 py-4 space-y-2.5 bg-cyan-900 bg-opacity-50 border-2 border-cyan-700 rounded-lg text-white">
+			<div class="flex gap-2.5">
+				<span class="flex-none -ml-1 w-8 text-cyan-300">
+					@include('icons/tutorial')
+				</span>
+				<h2 class="text-cyan-100 text-lg font-semibold">Go forth and give presents  <span class="pl-1 text-sm font-normal text-cyan-200">{{ auth.user.missions.length === 0 ? '1/4' : '4/4' }}</span></h2>
 			</div>
-
-			<p class="mb-2 text-gray-400">{{ mission.type === 'pickup' ? 'from' : 'to' }} {{ mission.destination.name }}</p>
-			@if(mission.started == null)
-				<p>{{ mission.workers.length }} {{ mission.workers.length === 1 ? 'elf' : 'elves' }} ready to go</p>
-				<a href="/game/missions/{{ mission.id }}" class="inline-block mt-1 px-3 py-0.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer no-underline hover:text-white focus:text-white">Set up</a>
+			@if(auth.user.missions.length === 0)
+				<p><em class="italic">Wait, what happened?</em> We've taken you to a different section of your department to continue the <del class="line-through">tutorial</del> guided tour for new employees.</p>
+				<p>This is the world screen. You can use it to set up missions and send elves all over the world. But before we can start a mission, we have to figure out a good destination.</p>
+				<p>Each location has a few different stats:</p>
+				<ul class="space-y-1.5 ml-3 list-disc">
+					<li><strong class="font-semibold">How long</strong> the mission will take. Any elves you send away on a mission will be unavailable until the mission is finished.</li>
+					<li>The <strong class="font-semibold">christmas spirit</strong> indicates how many children are waiting for a christmas present. This influences the length of the wishlist you get.</li>
+					<li>Minimum <strong class="font-semibold">skill requirement</strong> for any elves you send on the mission.</li>
+				</ul>
+				<p>Let's start a mission now to collect our first wishlists from the children of earth. I highly recommended you start with the shortest mission so you can move on quickly, but it's entirely your call.</p>
+				<p>Choose a destination and click <strong class="font-semibold">"start mission"</strong>.</p>
 			@else
-				<p class="text-gray-300">
-					<span class="text-white">{{ mission.workers.length }}</span> {{ mission.workers.length === 1 ? 'elf' : 'elves' }}
-					will return <span class="text-white">{{ mission.endTime.plus({ seconds: 1 }).toRelative() }}</span>
-				</p>
-				<a href="/game/missions/{{ mission.id }}" class="inline-block mt-1 px-3 py-0.5 bg-gradient-to-br from-gray-500 to-gray-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer  no-underline hover:text-white focus:text-white">View details</a>
+				<p>Now all that's left to do is wait for your first mission to finish.</p>
+				<p>Note that the timer doesn't update automatically so you'll want to reload the page periodically to check how long the mission still needs to go on for.</p>
+				<p class="text-sm text-cyan-200 text-opacity-50 italic">Author's note: please just stay on this page for a minute and then refresh, the tutorial doesn't like when you go clicking around at this point. Maybe say merry christmas in the <a href="https://discord.gg/KvwaEqC" target="_blank">PBBG Discord</a> while you wait?</p>
 			@end
-
 		</div>
 	@end
-</div>
 
-<h2 class="mb-2 text-sm font-bold text-gray-500">Destinations</h2>
-<div class="divide-y divide-gray-800">
-	@each((destination, id) in destinations)
-		@if(auth.user.canGoTo(id))
-			<form class="flex items-center pt-2 pb-3" action="/game/missions" method="post">
-				<div class="flex-grow">
-					<h3 class="text-lg font-semibold text-gray-400">{{ destination.name }}</h3>
-					<div class="flex flex-wrap gap-x-8 gap-y-0.5 text-sm">
-						<p>Approx. <span class="font-bold">{{ destination.distance }}</span> minutes away</p>
-						<p>Christmas spirit
-							<span class="inline-block w-6 h-2 ml-1 rounded-sm overflow-hidden bg-gray-800">
-								<span class="block h-2 bg-gradient-to-br from-cyan-400 to-cyan-600" style="width:{{ Math.min(5 + (destination.population * 100), 100) }}%"></span>
-							</span>
-						</p>
-						<p>Requires {{ destination.minSkill }} stealth</p>
+	@if(auth.user.missions.length > 0)
+		<h2 class="mb-2 text-sm font-bold text-gray-500">My missions</h2>
+		<div class="grid grid-cols-2 auto-rows-fr mb-6 gap-2">
+			@each(mission in auth.user.missions)
+				<div class="p-4 bg-gray-800 rounded">
+					<div class="flex">
+						<h3 class="flex-grow font-semibold">
+							@if(mission.type === 'pickup')
+								Picking up wishlists
+							@else
+								Delivering presents
+							@end
+						</h3>
+						@if(mission.reward > 0)
+							<p class="text-sm text-gray-400">
+								Payment: <span class="text-white font-mono">{{ mission.reward }}</span> coins
+							</p>
+						@end
 					</div>
+
+					<p class="mb-2 text-gray-400">{{ mission.type === 'pickup' ? 'from' : 'to' }} {{ mission.destination.name }}</p>
+					@if(mission.started == null)
+						<p>{{ mission.workers.length }} {{ mission.workers.length === 1 ? 'elf' : 'elves' }} ready to go</p>
+						<a href="/game/missions/{{ mission.id }}" class="inline-block mt-1 px-3 py-0.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer no-underline hover:text-white focus:text-white">Set up</a>
+					@else
+						<p class="text-gray-300">
+							<span class="text-white">{{ mission.workers.length }}</span> {{ mission.workers.length === 1 ? 'elf' : 'elves' }}
+							will return <span class="text-white">{{ mission.endTime.plus({ seconds: 1 }).toRelative() }}</span>
+						</p>
+						<a href="/game/missions/{{ mission.id }}" class="inline-block mt-1 px-3 py-0.5 bg-gradient-to-br from-gray-500 to-gray-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer  no-underline hover:text-white focus:text-white">View details</a>
+					@end
+
 				</div>
-				<div>
-					<input type="submit" value="Start mission" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
-					<input type="hidden" name="destination" value="{{ id }}" />
-					<input type="hidden" name="type" value="pickup" />
-					{{ csrfField() }}
-				</div>
-			</form>
-		@end
+			@end
+		</div>
 	@end
-</div>
+
+	<h2 class="mb-2 text-sm font-bold text-gray-500">Destinations</h2>
+	<div class="divide-y divide-gray-800">
+		@each((destination, id) in destinations)
+			@if(auth.user.canGoTo(id))
+				<form class="flex items-center pt-2 pb-3" action="/game/missions" method="post">
+					<div class="flex-grow">
+						<h3 class="text-lg font-semibold text-gray-400">{{ destination.name }}</h3>
+						<div class="flex flex-wrap gap-x-8 gap-y-0.5 text-sm">
+							<p>Approx. <span class="font-bold">{{ destination.distance }}</span> minutes away</p>
+							<p>Christmas spirit
+								<span class="inline-block w-6 h-2 ml-1 rounded-sm overflow-hidden bg-gray-800">
+									<span class="block h-2 bg-gradient-to-br from-cyan-400 to-cyan-600" style="width:{{ Math.min(5 + (destination.population * 100), 100) }}%"></span>
+								</span>
+							</p>
+							<p>Requires {{ destination.minSkill }} stealth</p>
+						</div>
+					</div>
+					<div>
+						<input type="submit" value="Start mission" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+						<input type="hidden" name="destination" value="{{ id }}" />
+						<input type="hidden" name="type" value="pickup" />
+						{{ csrfField() }}
+					</div>
+				</form>
+			@end
+		@end
+	</div>
 @end

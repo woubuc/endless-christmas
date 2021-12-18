@@ -3,39 +3,53 @@
 @set('title', 'Overview')
 
 @section('body')
-<h2 class="mb-2 text-sm font-bold text-gray-500">My Workbenches</h2>
-<div class="grid lg:grid-cols-2 auto-rows-auto gap-4">
-	@each(i in [0, 1, 2, 3, 4, 5])
-		@if(auth.user.buildings[i] == undefined)
-			<div>
-				<a href="/game/buildings/{{ i }}" class="flex items-center justify-center p-6 border-2 border-dashed border-gray-700 rounded-lg no-underline hover:bg-gray-800 hover:text-emerald-400">
-					<span>Build workbench</span>
-				</a>
+	@if(auth.user.needsTutorial('workbench'))
+		<div class="my-4 px-6 py-4 space-y-2 bg-cyan-900 bg-opacity-50 border-2 border-cyan-700 rounded-lg text-white">
+			<div class="flex gap-2.5">
+							<span class="flex-none -ml-1 w-8 text-cyan-300">
+								@include('icons/tutorial')
+							</span>
+				<h2 class="text-cyan-100 text-lg font-semibold">Work it! <span class="pl-1 text-sm font-normal text-cyan-200">1/4</span></h2>
 			</div>
-		@else
-			<div class="px-6 py-4 space-y-4 bg-gray-800 rounded">
-				<h3 class="flex items-center space-x-2 text-lg font-semibold">
-					<span class="text-gray-400">
-						@include(`icons/items/${ auth.user.buildings[i].type }`)
-					</span>
-					<span>{{ t(`items.${ auth.user.buildings[i].type }`) }}</span>
-				</h3>
-
-				<div>
-					@if(auth.user.buildings[i].workers.length == 0)
-						<p class="font-bold text-orange-300">Not active</p>
-						<p class="text-sm text-gray-400">Assign some elves to this workbench to produce {{ t(`items.${ auth.user.buildings[i].type }`) }}</p>
-					@else
-						<p class="text-sm text-gray-500">Production per minute:</p>
-						@!component('components/inventory', { inventory: auth.user.buildings[i].production })
-					@end
-				</div>
-
-				<p class="text-right">
-					<a href="/game/buildings/{{ i }}">Manage workbench</a>
-				</p>
-			</div>
-		@end
+			<p>This is your very own workshop, in your very own corner of Santa HQ. Santa Corp has generously provided you with enough room to build up to 6 workbenches.</p>
+			<p>Each workbench can only make a single type of item. Up to 2 elves can work at a single workbench to speed up production, should you want to.</p>
+			<p>Let's build a workbench. Choose a spot and click <strong class="font-semibold">"build workbench"</strong> to get started.</p>
+		</div>
 	@end
-</div>
+
+	<h2 class="mb-2 text-sm font-bold text-gray-500">My Workbenches</h2>
+	<div class="grid lg:grid-cols-2 auto-rows-auto gap-4">
+		@each(i in [0, 1, 2, 3, 4, 5])
+			@if(auth.user.buildings[i] == undefined)
+				<div>
+					<a href="/game/buildings/{{ i }}" class="flex items-center justify-center p-6 border-2 border-dashed border-gray-700 rounded-lg no-underline hover:bg-gray-800 hover:text-emerald-400">
+						<span>Build workbench</span>
+					</a>
+				</div>
+			@else
+				<div class="px-6 py-4 space-y-4 bg-gray-800 rounded">
+					<h3 class="flex items-center space-x-2 text-lg font-semibold">
+						<span class="text-gray-400">
+							@include(`icons/items/${ auth.user.buildings[i].type }`)
+						</span>
+						<span>{{ t(`items.${ auth.user.buildings[i].type }`) }}</span>
+					</h3>
+
+					<div>
+						@if(auth.user.buildings[i].workers.length == 0)
+							<p class="font-bold text-orange-300">Not active</p>
+							<p class="text-sm text-gray-400">Assign some elves to this workbench to produce {{ t(`items.${ auth.user.buildings[i].type }`) }}</p>
+						@else
+							<p class="text-sm text-gray-500">Production per minute:</p>
+							@!component('components/inventory', { inventory: auth.user.buildings[i].production })
+						@end
+					</div>
+
+					<p class="text-right">
+						<a href="/game/buildings/{{ i }}">Manage workbench</a>
+					</p>
+				</div>
+			@end
+		@end
+	</div>
 @end

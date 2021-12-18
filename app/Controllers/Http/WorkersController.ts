@@ -46,15 +46,25 @@ export default class WorkersController {
 			throw new Error('Not enough money');
 		}
 
-		await Database.transaction(async tx => {
+		return Database.transaction(async tx => {
 			user.money -= worker.wage;
-			await user.useTransaction(tx).save();
-
 			worker.hired = true;
-			await worker.useTransaction(tx).save();
-		});
 
-		return response.redirect('/game/workers/hire');
+			let tutorialCompleted = false;
+			if (user.needsTutorial('hire_elves')) {
+				user.completeTutorial('hire_elves');
+				tutorialCompleted = true;
+			}
+
+			await user.useTransaction(tx).save();
+			await worker.useTransaction(tx).save();
+
+			if (tutorialCompleted) {
+				return response.redirect('/game/missions');
+			} else {
+				return response.redirect('/game/workers/hire');
+			}
+		});
 	}
 
 	public async recruit({ auth, response }: HttpContextContract) {

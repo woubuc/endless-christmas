@@ -13,6 +13,11 @@ export default class WishlistsController {
 			throw new ReferenceError('Invalid ID');
 		}
 
+		if (user.needsTutorial('wishlist')) {
+			user.completeTutorial('wishlist');
+			await user.save();
+		}
+
 		return view.render('game/wishlist', { wishlist });
 	}
 

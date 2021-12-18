@@ -3,6 +3,32 @@
 @set('title', 'Hire elves')
 
 @section('body')
+	@if(auth.user.needsTutorial('hire_elves'))
+	<div class="my-4 px-6 py-4 space-y-2.5 bg-cyan-900 bg-opacity-50 border-2 border-cyan-700 rounded-lg text-white">
+		<div class="flex gap-2.5">
+					<span class="flex-none -ml-1 w-8 text-cyan-300">
+						@include('icons/tutorial')
+					</span>
+			<h2 class="text-cyan-100 text-lg font-semibold">Vacancy <span class="pl-1 text-sm font-normal text-cyan-200">{{ workers.length === 0 ? '2/3' : '3/3' }}</span></h2>
+		</div>
+		@if(workers.length === 0)
+			<p>Let's start by searching the internal database for some elves who would like to transfer to your new department.</p>
+			<p>Santa Corp charges a fee of <strong class="font-semibold">1 coin</strong> for each search action.</p>
+			<p>Click the <strong class="font-semibold">"search candidates"</strong> button to pay your first corporate fee and to get a list of elves you can hire.</p>
+		@else
+			<p>Before hiring an elf, take a look at their skills.</p>
+			<ul class="space-y-1.5 ml-3 list-disc">
+				<li><strong>Stealth</strong> is needed to sneak into homes and collect their wishlists without waking up the children. Missions to some destinations will require higher stealth skills.</li>
+				<li><strong>Strength</strong> is needed to carry all the presents around when delivering them. Similar to stealth, certain destinations will require higher strength skills.</li>
+				<li><strong>Giftwrapping</strong> is used to determine how efficiently an elf will produce presents at your workbenches.</li>
+			</ul>
+			<p>Each elf also demands a certain daily wage<span class="text-cyan-100">*</span>. You pay this once when hiring, and then every 24 hours for as long as the elf is employed by your department.</p>
+			<p class="text-sm text-cyan-200 text-opacity-50 italic"><sup>*</sup> The listed daily wage includes Santa Corp HR fees, executive deductions, and assorted taxes.</p>
+			<p>Choose an elf you like and click <strong class="font-semibold">"hire"</strong>.</p>
+		@end
+	</div>
+	@end
+
 	<div class="grid md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-4">
 		@each(worker in workers)
 			<div class="bg-gray-800 rounded p-6">
@@ -20,7 +46,7 @@
 	</div>
 
 	<form action="/game/workers/hire/recruit" method="post" class="py-4">
-		<input type="submit" value="Search more candidates (1 gold)" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer">
+		<input type="submit" value="Search {{ workers.length > 0 ? 'more ' : '' }}candidates (1 coin)" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer">
 		{{ csrfField() }}
 	</form>
 @end

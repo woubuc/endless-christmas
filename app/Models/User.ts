@@ -59,11 +59,34 @@ export default class User extends BaseModel {
 	@column()
 	public money: number = 250;
 
+	@column()
+	public tutorial: Record<string, boolean> = {};
+	private justCompletedTutorials = new Set<string>();
+
+	public needsTutorial(key: string): boolean {
+		return this.tutorial[key] == undefined || !this.tutorial[key];
+	}
+
+	public justCompletedTutorial(key: string): boolean {
+		return this.justCompletedTutorials.has(key);
+	}
+
+	public completeTutorial(key: string): void {
+		this.tutorial[key] = true;
+		this.justCompletedTutorials.add(key);
+	}
+
+
 	@computed()
 	public get freeWorkerCount(): number {
 		return this.workers
 			.filter(w => w.hired && w.buildingId == null && w.missionId == null)
 			.length;
+	}
+
+	@computed()
+	public get hiredWorkerCount(): number {
+		return this.workers.filter(w => w.hired).length;
 	}
 
 	@computed()
@@ -111,6 +134,9 @@ export default class User extends BaseModel {
 
 				for (let mission of user.missions) {
 					if (mission.isFinished) {
+						if (user.needsTutorial('mission')) {
+							user.completeTutorial('mission');
+						}
 						if (mission.type === 'pickup') {
 							let wishlist = await Wishlist.generate(mission.userId, mission.destinationId, mission.destination.population);
 							user.missions.splice(user.missions.indexOf(mission), 1);

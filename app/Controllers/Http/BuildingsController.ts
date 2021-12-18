@@ -26,6 +26,11 @@ export default class BuildingsController {
 			.filter(w => w.missionId == null && w.buildingId == null)
 			.sort((a, b) => b.skillCrafting - a.skillCrafting);
 
+		if (user.needsTutorial('workbench') && building.workers.length > 0) {
+			user.completeTutorial('workbench');
+			await user.save();
+		}
+
 		return view.render('game/buildings/show', {
 			building,
 			workers: availableWorkers,

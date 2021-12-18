@@ -103,10 +103,10 @@
 		<div class="flex-grow px-4 sm:pl-0 md:pr-0">
 			<nav class="flex flex-col sm:flex-row flex-wrap gap-x-2 gap-y-0.5 mb-4 p-2 border-2 border-gray-700 rounded-lg">
 				<a href="/game"
-				   class="px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game') ? 'bg-gray-800 text-gray-300' : '' }}">Santa HQ</a>
+				   class="px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game') ? 'bg-gray-700 text-white' : '' }}">Santa HQ</a>
 
 				<a href="/game/workers"
-				   class="relative flex items-center px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/workers') ? 'bg-gray-800 text-gray-300' : '' }}">
+				   class="relative flex items-center px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/workers') ? 'bg-gray-700 text-white' : '' }}">
 					Elves
 					@if(auth.user.freeWorkerCount > 0)
 						<span class="sm:absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 ml-2 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
@@ -116,12 +116,12 @@
 				</a>
 
 				<a href="/game/market"
-				   class="px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/market') ? 'bg-gray-800 text-gray-300' : '' }}">
+				   class="px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/market') ? 'bg-gray-700 text-white' : '' }}">
 					Market
 				</a>
 
 				<a href="/game/missions"
-				   class="relative flex items-center px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/missions') ? 'bg-gray-800 text-gray-300' : '' }}">
+				   class="relative flex items-center px-2.5 md:px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/missions') ? 'bg-gray-700 text-white' : '' }}">
 					World
 					@if(auth.user.pendingMissionCount > 0)
 					<span class="sm:absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 ml-2 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
@@ -137,6 +137,33 @@
 					{{ csrfField() }}
 				</form>
 			</nav>
+
+			@if(auth.user.wishlists.length > 0 && (auth.user.needsTutorial('wishlist') || auth.user.justCompletedTutorial('wishlist')))
+				<div class="my-4 px-6 py-4 space-y-2 bg-cyan-900 bg-opacity-50 border-2 border-cyan-700 rounded-lg text-white">
+					<div class="flex gap-2.5">
+						<span class="flex-none -ml-1 w-8 text-cyan-300">
+							@include('icons/tutorial')
+						</span>
+						<h2 class="text-cyan-100 text-lg font-semibold">It's a list! <span class="pl-1 text-sm font-normal text-cyan-200">{{ auth.user.justCompletedTutorial('wishlist') ? '2/2' : '1/2' }}</span></h2>
+					</div>
+					@if(auth.user.justCompletedTutorial('wishlist'))
+						<p>A wishlist is a list of presents that the children wished for.</p>
+						<p>In order to complete a wishlist, you'll need to collect all presents on the list and then organise a delivery mission to deliver the presents to the children who wished for them.</p>
+						<p>Completing wishlists will be your primary source of income. Santa Corp will pay out <strong>2 coins</strong><span class="text-cyan-100">*</span> for every delivered present when a delivery mission finishes.</p>
+						<p class="text-sm text-cyan-200 text-opacity-50 italic"><sup>*</sup> Not adjusted for inflation since 1843.</p>
+						<p>To obtain the necessary items, you have two options:</p>
+						<ul class="ml-3 list-disc">
+							<li>Buy them on the <strong class="font-semibold">market</strong>. This can get very expensive but it can help to complete wishlists when you're just missing a few items.</li>
+							<li>Have elves make them in your workshop by setting up <strong class="font-semibold">workbenches</strong>.</li>
+						</ul>
+						<p>Take a look at the wishlist and figure out which item you'd like to start manufacturing. Then head over to your <a href="/game">workshop in Santa HQ</a> to set up a workbench for that item.</p>
+					@else
+						<p>The mission has finished and you've received a wishlist! Your wishlists are collected in the info bar underneath your name and inventory.</p>
+						<p>You can only ever have one wishlist for each location. New christmas wishes are only made once the previous ones are fulfilled.</p>
+						<p>Click on the wishlist now to explore it.</p>
+					@end
+				</div>
+			@end
 
 			@!section('body')
 

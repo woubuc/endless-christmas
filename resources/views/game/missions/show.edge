@@ -3,6 +3,27 @@
 @set('title', 'Mission')
 
 @section('body')
+	@if(auth.user.needsTutorial('mission'))
+		<div class="my-4 px-6 py-4 space-y-2.5 bg-cyan-900 bg-opacity-50 border-2 border-cyan-700 rounded-lg text-white">
+			<div class="flex gap-2.5">
+				<span class="flex-none -ml-1 w-8 text-cyan-300">
+					@include('icons/tutorial')
+				</span>
+				<h2 class="text-cyan-100 text-lg font-semibold">Go forth and give presents  <span class="pl-1 text-sm font-normal text-cyan-200">{{ mission.workers.length === 0 ? '2/4' : '3/4' }}</span></h2>
+			</div>
+			@if(mission.workers.length === 0)
+				<p>This is the mission preparation screen. Neat! Let's send the elf you just hired.</p>
+				<p>The dropdown shows all eligible elves that can be sent on this mission. An elf is eligible if they aren't doing anything and meet the minimum skill requirement.</p>
+				<p>Select your elf and then click <strong class="font-semibold">"add"</strong> to assign them to the mission.</p>
+			@else
+				<p>Once a mission has at least 1 assigned elf, you can choose to start it.</p>
+				<p>Santa Corp official guidelines state that the recommended amount of elves on a mission is 2 or more, but just between us, you're not going to get in trouble for sending a single elf on a mission. In fact, management encourages efficiency.</p>
+				<p>You can freely assign and unassign any number of elves to a mission while it's still in the planning stage. However, once a mission starts all assigned elves will be unavailable until the mission is completed.</p>
+				<p>Click on the <strong class="font-semibold">"start mission"</strong> button to start the mission.</p>
+			@end
+		</div>
+	@end
+
 	<h2 class="text-lg font-semibold text-gray-400">
 		@if(mission.type === 'pickup')
 			Picking up wishlists from
