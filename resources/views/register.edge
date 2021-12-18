@@ -1,0 +1,38 @@
+@layout('layouts/main')
+
+@set('title', 'Register')
+
+@section('body')
+<div class="flex justify-center">
+	<form action="/register" method="post" class="p-12 space-y-4">
+		<label class="block">
+			<span class="block text-sm">Email address</span>
+			@if(flashMessages.has('errors.email'))
+			<span class="block mt-0.5 mb-1 px-2 py-px font-medium text-red-200 bg-red-900 rounded">
+				{{ flashMessages.get('errors.email') }}
+			</span>
+			@end
+			<input type="email" name="email" value="{{ flashMessages.get('email', '') }}" class="px-3 py-1.5 bg-gray-800 rounded border-2 border-gray-700" />
+		</label>
+		<label class="block">
+			<span class="block text-sm">Password</span>
+			@if(flashMessages.has('errors.password'))
+			<span class="block mt-0.5 mb-1 px-2 py-px font-semibold text-red-200 bg-red-900 rounded">
+				{{ flashMessages.get('errors.password') }}
+			</span>
+			@end
+			<input type="password" name="password" class="px-3 py-1.5 bg-gray-800 rounded border-2 border-gray-700" />
+		</label>
+		<label class="block">
+			<span class="block text-sm">Verify password</span>
+			<input type="password" name="password_confirmation" class="px-3 py-1.5 bg-gray-800 rounded border-2 border-gray-700" />
+		</label>
+		<div class="flex items-center justify-between">
+			<input type="submit" value="Sign up" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+
+			<a href="/login">Log in</a>
+		</div>
+		{{ csrfField() }}
+	</form>
+</div>
+@end

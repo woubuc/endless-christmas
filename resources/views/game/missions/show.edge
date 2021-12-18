@@ -1,0 +1,93 @@
+@layout('layouts/game')
+
+@set('title', 'Mission')
+
+@section('body')
+	<h2 class="text-lg font-semibold text-gray-400">
+		@if(mission.type === 'pickup')
+		Picking up wishlists from
+		@else
+		Delivering presents to
+		@end
+		{{ mission.destination.name }}
+	</h2>
+
+	@if(mission.started == null)
+	<p class="mb-4">Preparing for mission</p>
+	@else
+		<p>Mission will return {{ mission.endTime.plus({ seconds: 1 }).toRelative() }}</p>
+	@end
+
+	<div class="my-4 p-4 space-y-4 bg-gray-800 rounded">
+		@if(mission.workers.length > 0)
+			@each(worker in mission.workers)
+				@if(mission.started == null)
+					<form action="/game/missions/{{ mission.id }}/workers/{{ worker.id }}?_method=DELETE" method="post" class="flex items-center space-x-2">
+						<p class="flex-grow">{{ worker.name }}
+							@if(mission.type === 'deliver')
+							({{ worker.skillStrength }} strength)
+							@else
+							({{ worker.skillStealth }} stealth)
+							@end
+						</p>
+						<input type="submit" value="Remove" class="px-2 py-px bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+						{{ csrfField() }}
+					</form>
+				@else
+					<p>{{ worker.name }}
+						@if(mission.type === 'deliver')
+						({{ worker.skillStrength }} strength)
+						@else
+						({{ worker.skillStealth }} stealth)
+						@end
+					</p>
+				@end
+			@end
+		@else
+			<p class="text-sm italic text-gray-400 text-center">No elves assigned to this mission yet</p>
+		@end
+
+		@if(mission.started == null)
+			<form action="/game/missions/{{ mission.id }}/workers" method="post" class="flex items-center space-x-4 pt-4 border-t-2 border-gray-700">
+				@if(workers.length > 0)
+					<label class="flex items-center space-x-2">
+						<span>Assign elf</span>
+						<select name="worker" class="px-3 py-1 bg-gray-700 text-white rounded">
+							@each(worker in workers)
+								<option value="{{ worker.id }}">{{ worker.name }}
+									@if(mission.type === 'deliver')
+										({{ worker.skillStrength }} strength)
+									@else
+										({{ worker.skillStealth }} stealth)
+									@end
+								</option>
+							@end
+						</select>
+					</label>
+					<input type="submit" value="Add" class="px-3 py-0.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+					{{ csrfField() }}
+				@else
+					<p>No available elves</p>
+				@end
+
+				<span class="flex-grow"></span>
+				@if(mission.type === 'pickup')
+					<p class="text-gray-300">Minimum stealth skill: <span class="text-white font-semibold">{{ mission.destination.minSkill }}</span></p>
+				@else
+					<p class="text-gray-300">Minimum strength skill: <span class="text-white font-semibold">{{ mission.destination.minSkill }}</span></p>
+				@end
+			</form>
+		@end
+	</div>
+
+	@if(mission.started == null)
+		@if(mission.workers.length > 0)
+		<form action="/game/missions/{{ mission.id }}/start" method="post" class="my-4">
+			<input type="submit" value="Start mission (will return in {{ mission.destination.distance }} minutes)" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+			{{ csrfField() }}
+		</form>
+		@else
+			<p class="my-4 text-gray-400">Add at least one elf to start this mission</p>
+		@end
+	@end
+@end

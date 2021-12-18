@@ -1,0 +1,30 @@
+@layout('layouts/game')
+
+@set('title', 'Elves')
+
+@section('body')
+	<p class="mb-4 pb-4 text-right border-b-2 border-gray-800">
+		<a href="/game/workers/hire" class="inline-block no-underline px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 hover:text-white focus:text-white rounded text-white font-medium cursor-pointer">Hire more elves</a>
+	</p>
+
+	<div class="md:grid grid-cols-2 lg:grid-cols-3 gap-4">
+		@each(worker in workers)
+			<div class="bg-gray-800 rounded p-6">
+				@!component('components/worker', { worker })
+
+				@if(worker.missionId != null)
+					<a href="/game/missions/{{ worker.missionId }}" class="block px-3 py-0.5 bg-gradient-to-br from-sky-600 to-sky-800 text-sky-200 rounded text-center no-underline hover:from-sky-500 hover:to-sky-700 hover:text-white">On mission</a>
+				@elseif(worker.buildingId != null)
+					<a href="/game/buildings/{{ auth.user.buildings.findIndex(b => b.id === worker.buildingId) }}" class="block px-3 py-0.5 bg-gradient-to-br from-amber-600 to-amber-800 text-amber-200 rounded text-center no-underline hover:from-amber-500 hover:to-amber-700 hover:text-white">Working</a>
+				@else
+					<form action="/game/workers/{{ worker.id }}?_method=DELETE" method="post" class="flex items-center">
+						<p class="flex-grow px-3 py-0.5 text-gray-400 text-center">Idle</p>
+						<input type="submit" value="Fire" class="px-3 py-0.5 bg-gradient-to-br from-gray-500 to-gray-700 hover:from-red-600 hover:to-red-900 rounded text-white font-medium cursor-pointer">
+						{{ csrfField() }}
+					</form>
+				@end
+
+			</div>
+		@end
+	</div>
+@end

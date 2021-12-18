@@ -1,0 +1,65 @@
+@layout('layouts/game')
+
+@set('title', 'Build workshop')
+
+@section('body')
+	@if(auth.user.money >= 50)
+		<form action="/game/buildings/{{ index }}" method="post" class="p-6 space-y-4">
+			<div class="text-gray-300 leading-7">
+				<span class="block text-sm">Select building type</span>
+
+				@if(flashMessages.has('errors.type'))
+				<span class="block mt-0.5 mb-1 px-2 py-px font-semibold text-red-200 bg-red-900 rounded">
+					{{ flashMessages.get('errors.type') }}
+				</span>
+				@end
+
+				<label class="block py-px">
+					<input type="radio" name="type" value="games">
+					<strong class="text-white">Board games</strong>
+					(base rate: 2/minute)
+				</label>
+				<label class="block py-px">
+					<input type="radio" name="type" value="books">
+					<strong class="text-white">Books</strong>
+					(base rate: 4/minute)
+				</label>
+				<label class="block py-px">
+					<input type="radio" name="type" value="construction">
+					<strong class="text-white">Building blocks</strong>
+					(base rate: 2/minute)
+				</label>
+				<label class="block py-px">
+					<input type="radio" name="type" value="decor">
+					<strong class="text-white">Collectibles</strong>
+					(base rate: 3/minute)
+				</label>
+				<label class="block py-px">
+					<input type="radio" name="type" value="electronics">
+					<strong class="text-white">Electronics</strong>
+					(base rate: 1/minute)
+				</label>
+				<label class="block py-px">
+					<input type="radio" name="type" value="music">
+					<strong class="text-white">Musical instruments</strong>
+					(base rate: 1/minute)
+				</label>
+				<label class="block py-px">
+					<input type="radio" name="type" value="plushies">
+					<strong class="text-white">Plushies</strong>
+					(base rate: 4/minute)
+				</label>
+				<label class="block py-px">
+					<input type="radio" name="type" value="toys">
+					<strong class="text-white">Toys</strong>
+					(base rate: 3/minute)
+				</label>
+			</div>
+
+			<input type="submit" value="Build (50 coins)" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+			{{ csrfField() }}
+		</form>
+	@else
+		<p class="p-12">You don't have enough coins to build a new workshop</p>
+	@end
+@end

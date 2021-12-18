@@ -1,0 +1,26 @@
+@layout('layouts/game')
+
+@set('title', 'Hire elves')
+
+@section('body')
+	<div class="md:grid grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-4">
+		@each(worker in workers)
+			<div class="bg-gray-800 rounded p-6">
+				@!component('components/worker', { worker })
+				<form action="/game/workers/{{ worker.id }}" method="post" class="py-4">
+					@if(auth.user.money < worker.wage)
+						<input type="submit" value="Cannot afford" class="px-3 py-1 bg-gradient-to-br from-rose-500 to-rose-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer pointer-events-none" disabled="disabled">
+					@else
+						<input type="submit" value="Hire ({{ worker.wage }} coins)" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer">
+					@end
+					{{ csrfField() }}
+				</form>
+			</div>
+		@end
+	</div>
+
+	<form action="/game/workers/hire/recruit" method="post" class="py-4">
+		<input type="submit" value="Search more candidates (1 gold)" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer">
+		{{ csrfField() }}
+	</form>
+@end

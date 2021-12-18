@@ -1,0 +1,42 @@
+@layout('layouts/game')
+
+@set('title', 'Workshop')
+
+@section('body')
+<h3 class="text-lg font-semibold">{{ t(`items.${ building.type }`) }}</h3>
+
+<div>
+	@if(building.workers.length == 0)
+		<p class="font-bold text-orange-300">Not active</p>
+		<p class="text-sm text-gray-400">Assign some elves to this workbench to produce {{ t(`items.${ building.type }`) }}</p>
+	@else
+		<p class="text-sm text-gray-500">Production per minute:</p>
+		@!component('components/inventory', { inventory: building.production })
+	@end
+</div>
+
+<div class="my-4 p-4 space-y-4 bg-gray-800 rounded">
+	@each(worker in building.workers)
+		<form action="/game/buildings/{{ index }}/workers/{{ worker.id }}?_method=DELETE" method="post" class="flex items-center space-x-2">
+			<p class="flex-grow">{{ worker.name }} ({{ worker.skillCrafting }} giftwrapping)</p>
+			<input type="submit" value="Remove" class="px-2 py-px bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+			{{ csrfField() }}
+		</form>
+	@end
+
+	@if(building.workers.length < 2)
+		<form action="/game/buildings/{{ index }}/workers" method="post" class="flex items-center space-x-4 pt-4 border-t-2 border-gray-700">
+			<label class="flex items-center space-x-2">
+				<span>Assign elf</span>
+				<select name="worker" class="px-3 py-1 bg-gray-700 text-white rounded">
+					@each(worker in workers)
+						<option value="{{ worker.id }}">{{ worker.name }} ({{ worker.skillCrafting }} giftwrapping)</option>
+					@end
+				</select>
+			</label>
+			<input type="submit" value="Add" class="px-3 py-0.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+			{{ csrfField() }}
+		</form>
+	@end
+</div>
+@end

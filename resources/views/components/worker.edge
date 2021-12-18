@@ -1,0 +1,30 @@
+<h3 class="text-lg font-semibold text-gray-400">{{ worker.name }}</h3>
+<p><span class="font-bold">{{ worker.wage }}</span> coins each day</p>
+
+<div class="py-3">
+	<div class="py-1 border-t-2 border-b-2 border-gray-700">
+		<div class="flex items-center space-x-2">
+			<span class="font-mono">{{ worker.skillStrength }}</span>
+			<p class="flex-grow text-sm text-gray-200">Strength</p>
+			<div class="w-8 h-2 rounded-sm overflow-hidden bg-gray-900">
+				<div class="h-2 bg-gradient-to-b from-lime-400 to-lime-500" style="width:{{ worker.skillStrength * 10 }}%"></div>
+			</div>
+		</div>
+
+		<div class="flex items-center space-x-2">
+			<span class="font-mono">{{ worker.skillStealth }}</span>
+			<p class="flex-grow text-sm text-gray-200">Stealth</p>
+			<div class="w-8 h-2 rounded-sm overflow-hidden bg-gray-900">
+				<div class="h-2 bg-gradient-to-b from-cyan-400 to-cyan-500" style="width:{{ worker.skillStealth * 10 }}%"></div>
+			</div>
+		</div>
+
+		<div class="flex items-center space-x-2">
+			<span class="font-mono">{{ worker.skillCrafting }}</span>
+			<p class="flex-grow text-sm text-gray-200">Giftwrapping</p>
+			<div class="w-8 h-2 rounded-sm overflow-hidden bg-gray-900">
+				<div class="h-2 bg-gradient-to-b from-amber-400 to-amber-500" style="width:{{ worker.skillCrafting * 10 }}%"></div>
+			</div>
+		</div>
+	</div>
+</div>

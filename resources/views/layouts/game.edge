@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ title }} | Endless Christmas</title>
+	<script src="//unpkg.com/alpinejs"></script>
+	<script src="//cdn.tailwindcss.com"></script>
+	<script>
+	tailwind.config = {
+		theme: {
+			extend: {
+				colors: {
+					gray: tailwind.colors.stone,
+				},
+			},
+		},
+	};
+	</script>
+	<style type="text/tailwindcss">
+	a {
+		@apply text-emerald-500 underline
+	}
+
+	a:hover, a:focus {
+		@apply text-emerald-600 no-underline
+	}
+	</style>
+	<script>
+	Alpine.store('user', JSON.parse('{{{ stringify(auth.user.serialize()) }}}'));
+	</script>
+</head>
+<body class="bg-gray-900 text-white border-t-2 border-orange-700">
+	<div class="sm:flex items-stretch gap-4 lg:gap-8 max-w-screen-lg h-screen mx-auto md:p-8 lg:p-12" style="margin-top:-2px">
+		<div
+			class="flex-none flex sm:flex-col space-x-6 sm:space-x-0 sm:space-y-10 sm:w-56 md:w-64 px-6 py-4 bg-gradient-to-b from-gray-800 to-gray-900 md:rounded">
+			<div>
+				<p class="flex items-center space-x-2 mb-3.5 text-white">
+					<span class="inline-block w-8 text-gray-400">
+						@include('icons/santa')
+					</span>
+					<span>Hi, <span class="font-semibold">{{ auth.user.name }}</span></span>
+				</p>
+				<p class="my-0.5 flex items-center space-x-2">
+					<span class="px-2 bg-gradient-to-br from-yellow-500 to-yellow-700 text-gray-100 rounded font-mono">{{ auth.user.money }}</span>
+					<span class="text-gray-300">coins</span>
+				</p>
+			</div>
+
+			<div>
+				<h2 class="mb-2 text-sm font-bold text-gray-500">Inventory</h2>
+				@each((amount, item) in auth.user.inventory)
+					@if(amount > 0)
+					<p class="my-1 flex items-center space-x-2.5 text-gray-400">
+						@include(`icons/items/${ item }`)
+						<span class="flex-grow">
+							<span class="text-white rounded font-mono font-semibold">{{ amount }}</span>
+							<span class="text-gray-400 text-sm">&nbsp;{{ t(`items.${ item }`) }}</span>
+						</span>
+						<a href="/game/market/sell/{{ item }}" class="text-sm">sell</a>
+					</p>
+					@end
+				@end
+			</div>
+
+			<div>
+				<h2 class="mb-2 text-sm font-bold text-gray-500">Wishlists</h2>
+				@each(wishlist in auth.user.wishlists)
+				<div class="flex space-x-2 items-center">
+					<p class="flex-grow">
+						<a href="/game/wishlists/{{ wishlist.id }}">{{ wishlist.destination.name }}</a>
+					</p>
+					<p class="text-xs font-mono text-gray-400">{{ Math.floor(wishlist.completeness * 100) }}%</p>
+					<div class="w-8 h-2 bg-gray-900 rounded-sm overflow-hidden">
+						<div class="h-2 bg-gradient-to-b {{ wishlist.completeness >= 1 ? 'from-lime-500 to-green-700' : 'from-violet-500 to-violet-700' }}" style="width:{{ Math.floor(wishlist.completeness * 100) }}%"></div>
+					</div>
+				</div>
+				@end
+			</div>
+		</div>
+
+		<div class="flex-grow px-4 sm:pl-0 md:pr-0">
+			<nav class="flex flex-wrap space-x-2 mb-4 p-2 border-2 border-gray-700 rounded-lg">
+				<a href="/game"
+				   class="px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game') ? 'bg-gray-800 text-gray-300' : '' }}">Santa HQ</a>
+
+				<a href="/game/workers"
+				   class="relative px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/workers') ? 'bg-gray-800 text-gray-300' : '' }}">
+					Elves
+					@if(auth.user.freeWorkerCount > 0)
+						<span class="absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
+							<span>{{ auth.user.freeWorkerCount }}</span>
+						</span>
+					@end
+				</a>
+
+				<a href="/game/market"
+				   class="relative px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/market') ? 'bg-gray-800 text-gray-300' : '' }}">
+					Market
+				</a>
+
+				<a href="/game/missions"
+				   class="relative px-4 py-1 rounded no-underline hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 font-semibold {{ request.matchesRoute('/game/missions') ? 'bg-gray-800 text-gray-300' : '' }}">
+					World
+					@if(auth.user.pendingMissionCount > 0)
+					<span class="absolute top-0 right-0 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 text-white font-semibold text-xs font-mono">
+							<span>{{ auth.user.pendingMissionCount }}</span>
+						</span>
+					@end
+				</a>
+
+				<span class="flex-grow"></span>
+				<form class="text-right" action="/logout" method="post">
+					<input type="submit" value="Log out"
+						   class="px-3 py-1 rounded no-underline text-emerald-500 hover:bg-gray-800 hover:text-emerald-400 focus:bg-gray-800 focus:text-emerald-400 text-sm font-semibold cursor-pointer">
+					{{ csrfField() }}
+				</form>
+			</nav>
+
+			@!section('body')
+		</div>
+	</div>
+</body>
+</html>

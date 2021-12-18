@@ -1,0 +1,34 @@
+@layout('layouts/game')
+
+@set('title', 'Wishlist')
+
+@section('body')
+	<h2 class="text-lg font-semibold text-gray-400">{{ wishlist.destination.name }}</h2>
+
+	<div class="flex items-center space-x-4 mb-4 px-4 py-2 bg-gray-800 rounded">
+		<div class="w-16 h-3 bg-gray-900 rounded overflow-hidden">
+			<div class="h-3 bg-gradient-to-b {{ wishlist.completeness >= 1 ? 'from-lime-500 to-green-700' : 'from-violet-500 to-violet-700' }}" style="width:{{ Math.floor(wishlist.completeness * 100) }}%"></div>
+		</div>
+		<p class="flex-grow text-gray-300">{{ Math.floor(wishlist.completeness * 100) }}% of {{ wishlist.totalCount }} total presents ready</p>
+	</div>
+
+	<div class="mb-4">
+		@each((amount, item) in wishlist.items)
+			@if(amount > 0)
+			<p class="my-0.5 flex items-center space-x-2">
+				<span class="px-2 bg-gradient-to-br {{ auth.user.inventory[item] >= amount ? 'from-lime-500 to-green-700' : 'from-gray-600 to-gray-700' }} text-gray-100 rounded font-mono">{{ auth.user.inventory[item] ?? 0 }}/{{ amount }}</span>
+				<span class="text-gray-300">{{ t(`items.${ item }`) }}</span>
+			</p>
+			@end
+		@end
+	</div>
+
+	@if(wishlist.completeness >= 1)
+		<form action="/game/wishlists/{{ wishlist.id }}/deliver" method="post">
+			<input type="submit" value="Deliver" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+			{{ csrfField() }}
+		</form>
+	@else
+		<p class="text-gray-400">You can start a delivery mission for this wishlist once you have all requested presents </p>
+	@end
+@end

@@ -1,0 +1,68 @@
+@layout('layouts/game')
+
+@set('title', 'World')
+
+@section('body')
+<h2 class="mb-2 text-sm font-bold text-gray-500">My missions</h2>
+<div class="grid grid-cols-2 auto-rows-fr mb-6 gap-2">
+	@each(mission in auth.user.missions)
+		<div class="p-4 bg-gray-800 rounded">
+			<div class="flex">
+				<h3 class="flex-grow font-semibold">
+					@if(mission.type === 'pickup')
+					Picking up wishlists
+					@else
+					Delivering presents
+					@end
+				</h3>
+				@if(mission.reward > 0)
+					<p class="text-sm text-gray-400">
+						Payment: <span class="text-white font-mono">{{ mission.reward }}</span> coins
+					</p>
+				@end
+			</div>
+
+			<p class="mb-2 text-gray-400">{{ mission.type === 'pickup' ? 'from' : 'to' }} {{ mission.destination.name }}</p>
+			@if(mission.started == null)
+				<p>{{ mission.workers.length }} {{ mission.workers.length === 1 ? 'elf' : 'elves' }} ready to go</p>
+				<a href="/game/missions/{{ mission.id }}" class="inline-block mt-1 px-3 py-0.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer no-underline hover:text-white focus:text-white">Set up</a>
+			@else
+				<p class="text-gray-300">
+					<span class="text-white">{{ mission.workers.length }}</span> {{ mission.workers.length === 1 ? 'elf' : 'elves' }}
+					will return <span class="text-white">{{ mission.endTime.plus({ seconds: 1 }).toRelative() }}</span>
+				</p>
+				<a href="/game/missions/{{ mission.id }}" class="inline-block mt-1 px-3 py-0.5 bg-gradient-to-br from-gray-500 to-gray-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer  no-underline hover:text-white focus:text-white">View details</a>
+			@end
+
+		</div>
+	@end
+</div>
+
+<h2 class="mb-2 text-sm font-bold text-gray-500">Destinations</h2>
+<div class="divide-y divide-gray-800">
+	@each((destination, id) in destinations)
+		@if(auth.user.canGoTo(id))
+			<form class="flex items-center pt-2 pb-3" action="/game/missions" method="post">
+				<div class="flex-grow">
+					<h3 class="text-lg font-semibold text-gray-400">{{ destination.name }}</h3>
+					<div class="flex flex-wrap space-x-8 text-sm">
+						<p>Approx. <span class="font-bold">{{ destination.distance }}</span> minutes away</p>
+						<p>Christmas spirit
+							<span class="inline-block w-6 h-2 ml-1 rounded-sm overflow-hidden bg-gray-800">
+								<span class="block h-2 bg-gradient-to-br from-cyan-400 to-cyan-600" style="width:{{ Math.min(5 + (destination.population * 100), 100) }}%"></span>
+							</span>
+						</p>
+						<p>Requires {{ destination.minSkill }} stealth</p>
+					</div>
+				</div>
+				<div>
+					<input type="submit" value="Start mission" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+					<input type="hidden" name="destination" value="{{ id }}" />
+					<input type="hidden" name="type" value="pickup" />
+					{{ csrfField() }}
+				</div>
+			</form>
+		@end
+	@end
+</div>
+@end

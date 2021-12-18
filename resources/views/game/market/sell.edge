@@ -1,0 +1,48 @@
+@layout('layouts/game')
+
+@set('title', 'Sell')
+
+@section('body')
+<h2 class="flex items-center space-x-2 mb-2 text-sm font-bold text-gray-500">
+	@include(`icons/items/${ item }`)
+	<span>Sell {{ t(`items.${ item }`) }}</span>
+</h2>
+
+<form action="/game/market/sell" method="post" class="flex flex-wrap items-stretch gap-4" x-data="{ amount: 1, price: 1 }">
+	<div class="flex-grow space-y-6">
+		<label class="block">
+			<span class="block mb-1">Amount</span>
+			<span class="flex items-center space-x-2.5">
+				<input type="range" name="amount" x-model="amount" min="1" step="1" max="{{ max }}" class="w-48 appearance-none bg-gray-800 rounded-full">
+				<span class="font-mono"><span x-text="amount"></span><span class="text-gray-400">/{{ max }}</span></span>
+			</span>
+		</label>
+
+		<label class="block pb-2">
+			<span class="block mb-1">Price per unit</span>
+			<span class="flex items-center space-x-1">
+				<input type="number" name="price" class="px-2.5 py-0.5 w-20 bg-gray-800 rounded font-mono" min="0" x-model="price" />
+				<span class="text-gray-400">coins</span>
+			</span>
+		</label>
+
+		<input type="submit" value="Sell (2 coins)" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+
+		<input type="hidden" name="item" value="{{ item }}" />
+
+		{{ csrfField() }}
+	</div>
+
+	<div class="space-y-4 p-6 border-2 border-gray-800 rounded">
+		<div>
+			<p>Listing fee</p>
+			<p><span class="font-mono">2</span> <span class="text-gray-400">coins</span></p>
+		</div>
+
+		<div>
+			<p>Total profit when all sold</p>
+			<p><span x-text="(amount * price) - 2" class="font-mono"></span> <span class="text-gray-400">coins</span></p>
+		</div>
+	</div>
+</form>
+@end

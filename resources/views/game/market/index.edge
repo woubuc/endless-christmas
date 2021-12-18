@@ -1,0 +1,51 @@
+@layout('layouts/game')
+
+@set('title', 'Market')
+
+@section('body')
+
+<div x-data="{ showOwn: true, showOther: true }">
+	<div class="flex items-center mb-4 px-4 py-2 bg-gray-800 rounded text-sm">
+		<p class="mr-2.5 text-gray-400">Show</p>
+		<button class="px-2.5 py-px border-2 font-semibold rounded-l" :class="showOwn && showOther ? 'border-gray-500 bg-gray-600 text-white': 'border-gray-700 text-gray-400'" @click="showOwn = true; showOther = true">All</button>
+		<button class="px-2.5 py-px border-2 font-semibold" :class="showOwn ? 'border-gray-500 bg-gray-600 text-white': 'border-gray-700 text-gray-400'" @click="showOwn = true; showOther = false">My offers</button>
+		<button class="px-2.5 py-px border-2 font-semibold rounded-r" :class="showOther ? 'border-gray-500 bg-gray-600 text-white': 'border-gray-700 text-gray-400'" @click="showOwn = false; showOther = true">Other offers</button>
+	</div>
+
+	<div class="divide-y-2 divide-gray-800">
+		@each(order in sellOrders)
+			<div class="flex items-center space-x-2.5 py-2" x-show="{{ order.userId === auth.user.id ? 'showOwn' : 'showOther' }}">
+				<div class="text-gray-400">
+					@include(`icons/items/${ order.item }`)
+				</div>
+				<p>
+					<span class="text-white font-mono font-semibold">{{ order.amount }}</span>
+					<span class="text-gray-400 text-sm">{{ t(`items.${ order.item }`) }}</span>
+				</p>
+				<p>
+					<span class="text-white font-mono font-semibold">{{ order.price }}</span>
+					<span class="text-gray-400 text-sm">coins each</span>
+				</p>
+
+				<span class="flex-grow"></span>
+
+				@if(order.userId === auth.user.id)
+					<form action="/game/market/orders/{{ order.id }}?_method=DELETE" method="post" class="flex items-center">
+						<input type="submit" value="Withdraw" class="px-3 py-0.5 bg-gradient-to-br from-gray-500 to-gray-700 hover:from-red-600 hover:to-red-900 rounded text-white font-medium cursor-pointer">
+						{{ csrfField() }}
+					</form>
+				@else
+				<form x-data="{ amount: 1, max: {{ order.amount }}, price: {{ order.price }} }" x-effect="amount > max ? amount = max : amount < 1 ? amount = 1 : {}" action="/game/market/orders/{{ order.id }}/buy" method="post" class="flex items-center space-x-4">
+					<label class="flex items-center space-x-1.5">
+						<span class="text-sm text-gray-300">Amount:</span>
+						<input type="number" name="amount" class="px-2 py-0.5 w-16 bg-gray-700 rounded font-mono" x-model="amount" min="1" max="{{ order.amount }}" />
+					</label>
+					<input type="submit" value="Buy 1 ({{ order.price }} coins)" :value="amount * price > $store.user.money ? 'Cannot afford' : `Buy ${ amount } (${ amount * price } coins)`" class="px-3 py-1 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" :class="amount * price > $store.user.money ? 'from-rose-500 to-rose-700 pointer-events-none' : 'from-emerald-500 to-emerald-700'" :disabled="amount * price > $store.user.money">
+					{{ csrfField() }}
+				</form>
+				@end
+			</div>
+		@end
+	</div>
+</div>
+@end

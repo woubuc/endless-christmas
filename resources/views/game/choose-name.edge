@@ -1,0 +1,30 @@
+@layout('layouts/main')
+
+@set('title', 'Choose a name')
+
+@section('body')
+<div class="max-w-screen-md mx-auto my-6 px-8 py-6 bg-gray-800 rounded-lg italic text-gray-300 space-y-2.5">
+	<p>Welcome to Santa Corp. Your assignment is simple:</p>
+	<ol class="ml-6 list-decimal">
+		<li>Collect wishlists from children all over the world</li>
+		<li>Make the requested gifts in your workshops</li>
+		<li>Deliver the gifts to the children</li>
+	</ol>
+	<p>You will receive a workshop at Santa HQ that you can set up with workbenches, and we'll provide you with access to your very own EMS - this Elf Management System will allow you to hire elves that you can send out on missions or assign to work in your workshop.</p>
+	<p>We just need to finish our HR paperwork. What is your name again?</p>
+</div>
+<form action="/game/choose-name" method="post" class="w-96 mx-auto px-12 py-6 space-y-4">
+	<label class="block">
+		<span class="block text-sm">Choose your Santa Name</span>
+		@if(flashMessages.has('errors.name'))
+		<span class="block mt-0.5 mb-1 px-2 py-px font-semibold text-red-200 bg-red-900 rounded">
+			{{ flashMessages.get('errors.name') }}
+		</span>
+		@end
+		<input type="text" name="name" class="w-full px-3 py-1.5 bg-gray-800 rounded border-2 border-gray-700" />
+	</label>
+
+	<input type="submit" value="Continue" class="px-4 py-1.5 bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-900 rounded text-white font-medium cursor-pointer" />
+	{{ csrfField() }}
+</form>
+@end
