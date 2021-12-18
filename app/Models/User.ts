@@ -57,7 +57,7 @@ export default class User extends BaseModel {
 	public inventory: Record<string, number> = {};
 
 	@column()
-	public money: number = 250;
+	public money: number = 300;
 
 	@column()
 	public tutorial: Record<string, boolean> = {};
