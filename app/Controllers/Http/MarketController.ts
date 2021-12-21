@@ -18,8 +18,8 @@ export default class MarketController {
 				console.log('no sell order for', item);
 				let order = new SellOrder();
 				order.item = item;
-				order.amount = Math.round(10 + (Math.random() * 40));
-				order.price = Math.round(3 + (Math.random() * 12));
+				order.amount = Math.round(10 + (Math.random() * 100));
+				order.price = Math.round(3 + (Math.random() * 7));
 				newOrders.push(order);
 			}
 		}
